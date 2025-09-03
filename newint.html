@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedPortal - Advanced Patient Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #1a1f2e;
+            --bg-card: #242b3d;
+            --bg-glass: rgba(36, 43, 61, 0.9);
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --accent-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
+            --text-primary: #f8fafc;
+            --text-secondary: #e2e8f0;
+            --text-muted: #cbd5e1;
+            --border-color: #475569;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: var(--bg-primary);
+        }
+
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 70%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 70%),
+                radial-gradient(circle at 40% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(1deg); }
+            66% { transform: translateY(-10px) rotate(-1deg); }
+        }
+
+        .navbar {
+            background: rgba(26, 31, 46, 0.98) !important;
+            backdrop-filter: blur(25px);
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-link {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary) !important;
+            transform: translateY(-2px);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-gradient);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .glass-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            transition: all 0.4s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 35px 70px rgba(0, 0, 0, 0.5);
+            border-color: var(--accent-primary);
+        }
+
+        .hero-section {
+            padding: 150px 0 100px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 50px;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px 30px;
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 25px 50px rgba(99, 102, 241, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 3.5rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 25px;
+            transition: transform 0.3s ease;
+            display: block;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .feature-title {
+            color: var(--text-primary) !important;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .feature-description {
+            color: var(--text-muted) !important;
+            line-height: 1.6;
+        }
+
+        .btn-primary-custom {
+            background: var(--accent-gradient);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white !important;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-primary-custom:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+            color: white !important;
+        }
+
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            padding: 50px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-control {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            color: var(--text-primary);
+            padding: 15px 20px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-control:focus {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            color: var(--text-primary);
+        }
+
+        .form-label {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .patient-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .patient-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .patient-card:hover::before {
+            left: 100%;
+        }
+
+        .patient-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateX(10px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.2);
+        }
+
+        .patient-name {
+            color: var(--text-primary) !important;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .patient-info {
+            color: var(--text-muted) !important;
+            font-size: 0.9rem;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 50px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .timeline::before {
+            content: '';
+            background: var(--accent-gradient);
+            width: 4px;
+            height: 100%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+            animation: timelineGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes timelineGlow {
+            from { box-shadow: 0 0 5px var(--accent-primary); }
+            to { box-shadow: 0 0 20px var(--accent-primary), 0 0 30px var(--accent-primary); }
+        }
+
+        .timeline-item {
+            position: relative;
+            width: 100%;
+            margin-bottom: 50px;
+            display: flex;
+            justify-content: flex-start;
+            opacity: 0;
+            animation: slideInTimeline 0.8s ease-out forwards;
+        }
+
+        .timeline-item:nth-child(even) {
+            animation-delay: 0.2s;
+        }
+
+        .timeline-item:nth-child(odd) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes slideInTimeline {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .timeline-img {
+            width: 30px;
+            height: 30px;
+            background: var(--accent-gradient);
+            border: 4px solid var(--bg-primary);
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 20px;
+            z-index: 2;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(99, 102, 241, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+
+        .timeline-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            border-radius: 20px;
+            width: 45%;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+        }
+
+        .timeline-content:hover {
+            transform: scale(1.05);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            border-color: var(--accent-primary);
+        }
+
+        .timeline-content h5 {
+            color: var(--text-primary) !important;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .timeline-content p {
+            color: var(--text-muted) !important;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .timeline-content strong {
+            color: var(--text-secondary) !important;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content::after {
+            content: '';
+            position: absolute;
+            top: 30px;
+            right: -15px;
+            border-width: 12px 0 12px 15px;
+            border-style: solid;
+            border-color: transparent transparent transparent var(--bg-card);
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            margin-left: auto;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content::after {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: -15px;
+            border-width: 12px 15px 12px 0;
+            border-style: solid;
+            border-color: transparent var(--bg-card) transparent transparent;
+        }
+
+        .patient-header {
+            background: var(--bg-glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            padding: 40px;
+            margin-bottom: 50px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .patient-avatar {
+            width: 120px;
+            height: 120px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            font-weight: bold;
+            animation: avatarFloat 3s ease-in-out infinite;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        @keyframes avatarFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .vital-badge {
+            background: var(--success);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin: 5px;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .vital-badge:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .vital-badge.warning {
+            background: var(--warning);
+        }
+
+        .vital-badge.danger {
+            background: var(--danger);
+        }
+
+        .medication-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px 18px;
+            margin: 8px 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .medication-item:hover {
+            border-color: var(--accent-primary);
+            transform: translateX(5px);
+        }
+
+        .alert-custom {
+            border: none;
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success-custom {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .alert-error-custom {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            border-top: 2px solid var(--accent-primary);
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .stats-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.4s ease;
+            height: 100%;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .stats-number {
+            font-size: 3rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .stats-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .contact-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            border-color: var(--accent-primary);
+            transform: translateX(10px);
+        }
+
+        .contact-item i {
+            font-size: 1.8rem;
+            margin-right: 20px;
+            width: 40px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .contact-item h6 {
+            color: var(--text-primary) !important;
+            margin-bottom: 5px;
+        }
+
+        .contact-item p {
+            color: var(--text-muted) !important;
+            margin: 0;
+        }
+
+        @media screen and (max-width: 768px) {
+            .hero-title { 
+                font-size: 2.5rem; 
+            }
+            .timeline-content { 
+                width: 85% !important; 
+                margin: 20px auto !important; 
+            }
+            .timeline-item:nth-child(even) .timeline-content { 
+                margin-left: auto !important; 
+            }
+            .login-card, .contact-card { 
+                padding: 30px; 
+            }
+            .navbar-nav {
+                background: var(--bg-secondary);
+                border-radius: 15px;
+                padding: 15px;
+                margin-top: 15px;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#" onclick="showPage('home')">
+                <i class="bi bi-heart-pulse-fill"></i> MedPortal
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="bi bi-list text-white"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('home')">
+                            <i class="bi bi-house-fill"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('about')">
+                            <i class="bi bi-info-circle-fill"></i> About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('login')">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('contact')">
+                            <i class="bi bi-envelope-fill"></i> Contact
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('api-keys')">
+                            <i class="bi bi-key-fill"></i> API Keys
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Page -->
+    <div id="home-page" class="page-section active">
+        <div class="hero-section">
+            <div class="container">
+                <h1 class="hero-title">
+                    <i class="bi bi-heart-pulse-fill"></i> MedPortal
+                </h1>
+                <p class="hero-subtitle">Revolutionizing Healthcare with Advanced Patient Management</p>
+                <button class="btn btn-primary-custom" onclick="showPage('login')">
+                    Enter Portal <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="container mb-5">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card text-center glass-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-person-check-fill"></i>
+                        </div>
+                        <h4 class="feature-title">Smart Patient Profiles</h4>
+                        <p class="feature-description">Comprehensive patient database with AI-powered insights, real-time health monitoring, and predictive analytics for proactive care management.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card text-center glass-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-activity"></i>
+                        </div>
+                        <h4 class="feature-title">Interactive Timeline</h4>
+                        <p class="feature-description">Visual medical history with dynamic encounters, procedures, treatment tracking, and outcome analysis for comprehensive care coordination.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card text-center glass-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-shield-fill-check"></i>
+                        </div>
+                        <h4 class="feature-title">Enterprise Security</h4>
+                        <p class="feature-description">Military-grade encryption with role-based access control, comprehensive audit trails, and HIPAA-compliant data protection protocols.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-md-6">
+                    <div class="feature-card glass-card">
+                        <h4 class="feature-title">
+                            <i class="bi bi-graph-up-arrow text-primary"></i> Advanced Analytics
+                        </h4>
+                        <p class="feature-description">Real-time health metrics, predictive analytics, population health insights, and comprehensive reporting dashboard for evidence-based decisions and improved patient outcomes.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card glass-card">
+                        <h4 class="feature-title">
+                            <i class="bi bi-headset text-primary"></i> 24/7 Support
+                        </h4>
+                        <p class="feature-description">Round-the-clock technical assistance with dedicated healthcare IT specialists, emergency response team, and comprehensive training programs for seamless operation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Page -->
+    <div id="about-page" class="page-section">
+        <div class="hero-section">
+            <div class="container">
+                <h1 class="hero-title" style="font-size: 3rem;">
+                    <i class="bi bi-info-circle-fill"></i> About MedPortal
+                </h1>
+                <p class="hero-subtitle">Transforming Healthcare Management Through Innovation</p>
+            </div>
+        </div>
+
+        <div class="container mb-5">
+            <div class="row mb-5">
+                <div class="col-lg-6">
+                    <div class="glass-card p-4 h-100">
+                        <h3 class="feature-title mb-4">Our Mission</h3>
+                        <p class="feature-description">MedPortal is dedicated to revolutionizing healthcare management by providing cutting-edge technology solutions that enhance patient care, streamline medical workflows, and improve health outcomes. We bridge the gap between healthcare providers and patients through innovative digital platforms.</p>
+
+                        <h4 class="feature-title mt-4 mb-3">Key Features</h4>
+                        <ul class="feature-description">
+                            <li>Comprehensive Electronic Health Records (EHR) system</li>
+                            <li>Real-time patient monitoring and alerts</li>
+                            <li>Integrated telemedicine capabilities</li>
+                            <li>Advanced analytics and reporting tools</li>
+                            <li>Secure patient data management</li>
+                            <li>Multi-provider collaboration platform</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="glass-card p-4 h-100">
+                        <h3 class="feature-title mb-4">Our Vision</h3>
+                        <p class="feature-description">To create a connected healthcare ecosystem where medical professionals have instant access to comprehensive patient information, enabling faster diagnoses, personalized treatment plans, and better patient outcomes through technology. Our platform serves as a single source of truth, ensuring data integrity, security, and interoperability across all systems. We believe in a future where technology empowers both providers and patients, fostering a new era of proactive and patient-centric care.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="glass-card p-5 text-center">
+                        <h3 class="feature-title mb-4">Our Impact</h3>
+                        <div class="row mt-4">
+                            <div class="col-md-4 mb-4">
+                                <div class="stats-card">
+                                    <span class="stats-number">99.9%</span>
+                                    <span class="stats-label">Uptime</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="stats-card">
+                                    <span class="stats-number">95%</span>
+                                    <span class="stats-label">Efficiency Increase</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="stats-card">
+                                    <span class="stats-number">300+</span>
+                                    <span class="stats-label">Active Users</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="login-page" class="page-section">
+        <div class="login-container">
+            <div class="login-card text-center">
+                <h4 class="feature-title">
+                    <i class="bi bi-box-arrow-in-right"></i> Portal Login
+                </h4>
+                <p class="feature-description">Select your role and enter the API key to access the portal.</p>
+                <div class="mb-3 mt-4">
+                    <label for="userRoleSelect" class="form-label">Role</label>
+                    <select class="form-control" id="userRoleSelect">
+                        <option value="admin" selected>Admin</option>
+                        <option value="nurse">Nurse</option>
+                        <option value="receptionist">Receptionist</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="apiKeyInput" class="form-label">API Key</label>
+                    <input type="password" class="form-control" id="apiKeyInput" placeholder="****************">
+                </div>
+                <button class="btn btn-primary-custom w-100" id="loginBtn">
+                    Login
+                </button>
+                <div id="loginFeedback" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Page -->
+    <div id="contact-page" class="page-section">
+        <div class="hero-section" style="padding-top: 100px;">
+            <div class="container">
+                <h1 class="hero-title" style="font-size: 3rem;">
+                    <i class="bi bi-envelope-fill"></i> Get in Touch
+                </h1>
+                <p class="hero-subtitle">We are here to help and answer any questions you may have.</p>
+            </div>
+        </div>
+
+        <div class="container mb-5">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="contact-card glass-card p-4 h-100">
+                        <h4 class="feature-title">Contact Information</h4>
+                        <div class="contact-item">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            <div>
+                                <h6>Our Office</h6>
+                                <p>123 Healthcare Blvd, Medcity, TX 75001</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-telephone-fill"></i>
+                            <div>
+                                <h6>Phone Number</h6>
+                                <p>+1 (555) 123-4567</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-envelope-fill"></i>
+                            <div>
+                                <h6>Email Address</h6>
+                                <p>contact@medportal.com</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="contact-card glass-card p-4 h-100">
+                        <h4 class="feature-title">Contact Form</h4>
+                        <form>
+                            <div class="mb-3">
+                                <label for="contactName" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="contactName" placeholder="Your Name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="contactEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="contactEmail" placeholder="name@example.com">
+                            </div>
+                            <div class="mb-3">
+                                <label for="contactMessage" class="form-label">Message</label>
+                                <textarea class="form-control" id="contactMessage" rows="4" placeholder="Your message here..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary-custom w-100">
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Keys Management Page -->
+    <div id="api-keys-page" class="page-section">
+        <div class="hero-section" style="padding-top: 100px;">
+            <div class="container">
+                <h1 class="hero-title" style="font-size: 3rem;">
+                    <i class="bi bi-key-fill"></i> API Key Management
+                </h1>
+                <p class="hero-subtitle">Generate and manage API keys for secure access to the FHIR API</p>
+            </div>
+        </div>
+
+        <div class="container mb-5">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="glass-card p-4 h-100">
+                        <h4 class="feature-title mb-4">
+                            <i class="bi bi-plus-circle-fill"></i> Generate New API Key
+                        </h4>
+                        <form id="apiKeyForm">
+                            <div class="mb-3">
+                                <label for="keyName" class="form-label">Key Name</label>
+                                <input type="text" class="form-control" id="keyName" placeholder="e.g., Mobile App Key" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="keyDescription" class="form-label">Description</label>
+                                <textarea class="form-control" id="keyDescription" rows="3" placeholder="Describe the purpose of this API key"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="expiresInDays" class="form-label">Expires In (Days)</label>
+                                <input type="number" class="form-control" id="expiresInDays" placeholder="Leave empty for no expiration">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Permissions</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="readPermission" checked>
+                                    <label class="form-check-label" for="readPermission">Read Access</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="writePermission" checked>
+                                    <label class="form-check-label" for="writePermission">Write Access</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="deletePermission">
+                                    <label class="form-check-label" for="deletePermission">Delete Access</label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary-custom w-100">
+                                <i class="bi bi-key-fill"></i> Generate API Key
+                            </button>
+                        </form>
+                        <div id="apiKeyResult" class="mt-3"></div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="glass-card p-4 h-100">
+                        <h4 class="feature-title mb-4">
+                            <i class="bi bi-list-ul"></i> Existing API Keys
+                        </h4>
+                        <button class="btn btn-primary-custom mb-3" onclick="loadApiKeys()">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh Keys
+                        </button>
+                        <div id="apiKeysList">
+                            <p class="feature-description">Click "Refresh Keys" to load existing API keys</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Patient Details Page -->
+    <div id="patient-page" class="page-section">
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="patient-header glass-card">
+                        <div class="patient-avatar" id="patientAvatar">JD</div>
+                        <h2 class="hero-title my-3" id="patientName"></h2>
+                        <p class="feature-description">
+                            DOB: <span id="patientDob"></span> | ID: <span id="patientIdDisplay"></span>
+                        </p>
+                        <div class="mt-4">
+                            <span class="vital-badge"><i class="bi bi-heart-fill"></i> Healthy</span>
+                            <span class="vital-badge warning"><i class="bi bi-thermometer-half"></i> Stable</span>
+                            <span class="vital-badge danger"><i class="bi bi-virus"></i> Risk Factor</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class="feature-title text-center mb-4">Patient Timeline</h3>
+                    <div class="timeline" id="patientTimeline">
+                        <!-- Timeline items will be injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Nurse Dashboard -->
+    <div id="nurse-page" class="page-section">
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="patient-header glass-card">
+                        <div class="patient-avatar" id="nursePatientAvatar">JD</div>
+                        <h2 class="hero-title my-3" id="nursePatientName"></h2>
+                        <p class="feature-description">
+                            DOB: <span id="nursePatientDob"></span> | ID: <span id="nursePatientIdDisplay"></span>
+                        </p>
+                        <div class="mt-4">
+                            <span class="vital-badge"><i class="bi bi-heart-fill"></i> Healthy</span>
+                            <span class="vital-badge warning"><i class="bi bi-thermometer-half"></i> Stable</span>
+                            <span class="vital-badge danger"><i class="bi bi-virus"></i> Risk Factor</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class="feature-title text-center mb-4">Patient Medical Timeline</h3>
+                    <div class="timeline" id="nursePatientTimeline">
+                        <!-- Timeline items will be injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receptionist Dashboard -->
+    <div id="receptionist-page" class="page-section">
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="patient-header glass-card">
+                        <div class="patient-avatar" id="receptionistPatientAvatar">JD</div>
+                        <h2 class="hero-title my-3" id="receptionistPatientName"></h2>
+                        <p class="feature-description">
+                            DOB: <span id="receptionistPatientDob"></span> | ID: <span id="receptionistPatientIdDisplay"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class="feature-title text-center mb-4">Patient Demographics</h3>
+                    <div class="glass-card p-5">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-person-fill fs-4 me-3 text-primary"></i>
+                            <div>
+                                <h6 class="mb-0 text-muted">Full Name</h6>
+                                <p class="mb-0 fs-5 text-white" id="receptionistFullName"></p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-calendar-date-fill fs-4 me-3 text-primary"></i>
+                            <div>
+                                <h6 class="mb-0 text-muted">Date of Birth</h6>
+                                <p class="mb-0 fs-5 text-white" id="receptionistDOB"></p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-person-badge-fill fs-4 me-3 text-primary"></i>
+                            <div>
+                                <h6 class="mb-0 text-muted">Patient ID</h6>
+                                <p class="mb-0 fs-5 text-white" id="receptionistPatientId"></p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-gender-ambiguous fs-4 me-3 text-primary"></i>
+                            <div>
+                                <h6 class="mb-0 text-muted">Gender</h6>
+                                <p class="mb-0 fs-5 text-white" id="receptionistGender"></p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-telephone-fill fs-4 me-3 text-primary"></i>
+                            <div>
+                                <h6 class="mb-0 text-muted">Contact Number</h6>
+                                <p class="mb-0 fs-5 text-white" id="receptionistContact"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Custom modal replacement for alert/confirm
+        function showCustomModal(message, isConfirm = false, onConfirm = null) {
+            const existingModal = document.getElementById('customModal');
+            if (existingModal) existingModal.remove();
+
+            const modalHtml = `
+                <div id="customModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content glass-card border-0">
+                            <div class="modal-header border-0">
+                                <h5 class="modal-title text-white">MedPortal Message</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+                            </div>
+                            <div class="modal-body text-white">
+                                <p>${message}</p>
+                            </div>
+                            <div class="modal-footer border-0">
+                                ${isConfirm ? `
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary-custom" id="modalConfirmBtn">Confirm</button>
+                                ` : `
+                                <button type="button" class="btn btn-primary-custom" data-bs-dismiss="modal">OK</button>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modalElement = document.getElementById('customModal');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+
+            if (isConfirm && onConfirm) {
+                document.getElementById('modalConfirmBtn').addEventListener('click', () => {
+                    onConfirm();
+                    modal.hide();
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const mockApiKeys = {
+                'admin': 'admin123',
+                'nurse': 'nurse456',
+                'receptionist': 'receptionist789'
+            };
+            const loginBtn = document.getElementById('loginBtn');
+            const apiKeyInput = document.getElementById('apiKeyInput');
+            const userRoleSelect = document.getElementById('userRoleSelect');
+            const loginFeedback = document.getElementById('loginFeedback');
+            
+            const pages = {
+                'home': document.getElementById('home-page'),
+                'about': document.getElementById('about-page'),
+                'login': document.getElementById('login-page'),
+                'contact': document.getElementById('contact-page'),
+                'patient': document.getElementById('patient-page'),
+                'nurse': document.getElementById('nurse-page'),
+                'receptionist': document.getElementById('receptionist-page'),
+                'api-keys': document.getElementById('api-keys-page')
+            };
+
+            const showPage = (pageId) => {
+                for (let id in pages) {
+                    pages[id].classList.remove('active');
+                }
+                pages[pageId].classList.add('active');
+            };
+
+            window.showPage = showPage;
+
+            loginBtn.addEventListener('click', () => {
+                const selectedRole = userRoleSelect.value;
+                const apiKey = apiKeyInput.value.trim();
+                const expectedKey = mockApiKeys[selectedRole];
+                
+                loginFeedback.innerHTML = '';
+                loginBtn.disabled = true;
+
+                if (apiKey === expectedKey) {
+                    loginFeedback.innerHTML = `<div class="alert-custom alert-success-custom"><div class="loading-spinner"></div> Logging in...</div>`;
+                    setTimeout(() => {
+                        switch(selectedRole) {
+                            case 'admin':
+                                showPage('patient');
+                                fetchPatientData();
+                                break;
+                            case 'nurse':
+                                showPage('nurse');
+                                fetchNurseData();
+                                break;
+                            case 'receptionist':
+                                showPage('receptionist');
+                                fetchReceptionistData();
+                                break;
+                        }
+                        loginBtn.disabled = false;
+                        loginFeedback.innerHTML = '';
+                    }, 1500);
+                } else {
+                    loginFeedback.innerHTML = `<div class="alert-custom alert-error-custom"><i class="bi bi-exclamation-circle-fill"></i> Invalid API Key. Please try again.</div>`;
+                    loginBtn.disabled = false;
+                }
+            });
+
+            // Mock patient data for demonstration purposes
+            const mockPatient = {
+                id: "PHOENIX-001",
+                name: [{ given: ["Jane"], family: "Doe" }],
+                birthDate: "1990-05-15",
+                gender: "Female",
+                contact: { phone: "+1 (555) 123-4567" },
+                encounters: [
+                    { type: "Check-up", date: "2024-03-10", description: "Annual physical examination. Patient reported feeling well with no major concerns." },
+                    { type: "Lab Test", date: "2024-03-12", description: "Standard blood test and metabolic panel. Results came back within normal ranges." },
+                    { type: "Follow-up", date: "2024-03-20", description: "Review of lab results. Patient was advised to continue a healthy diet and exercise regimen." },
+                    { type: "Vaccination", date: "2024-08-01", description: "Administered flu shot. Patient was advised about potential side effects." }
+                ]
+            };
+
+            const renderPatientHeader = (pagePrefix, patient) => {
+                const firstName = patient.name[0].given[0];
+                const lastName = patient.name[0].family;
+                
+                document.getElementById(pagePrefix + 'PatientName').innerText = `${firstName} ${lastName}`;
+                document.getElementById(pagePrefix + 'PatientDob').innerText = patient.birthDate;
+                document.getElementById(pagePrefix + 'PatientIdDisplay').innerText = patient.id;
+                document.getElementById(pagePrefix + 'PatientAvatar').innerText = `${firstName.charAt(0)}${lastName.charAt(0)}`;
+            }
+
+            const renderPatientTimeline = (timelineId, encounters) => {
+                const timelineContainer = document.getElementById(timelineId);
+                timelineContainer.innerHTML = '';
+                encounters.forEach((enc, index) => {
+                    const side = index % 2 === 0 ? 'odd' : 'even';
+                    const timelineItem = document.createElement('div');
+                    timelineItem.className = `timeline-item timeline-item-${side}`;
+                    timelineItem.innerHTML = `
+                        <div class="timeline-img"></div>
+                        <div class="timeline-content">
+                            <h5>${enc.type}</h5>
+                            <p>${enc.description}</p>
+                            <strong>Date: ${enc.date}</strong>
+                        </div>
+                    `;
+                    timelineContainer.appendChild(timelineItem);
+                });
+            }
+
+            // Function for Admin/Doctor Dashboard
+            const fetchPatientData = () => {
+                renderPatientHeader('patient', mockPatient);
+                renderPatientTimeline('patientTimeline', mockPatient.encounters);
+            };
+            window.fetchPatientData = fetchPatientData; // Expose to window for direct page access
+
+            // Function for Nurse Dashboard
+            const fetchNurseData = () => {
+                renderPatientHeader('nurse', mockPatient);
+                renderPatientTimeline('nursePatientTimeline', mockPatient.encounters);
+            };
+            
+            // Function for Receptionist Dashboard
+            const fetchReceptionistData = () => {
+                renderPatientHeader('receptionist', mockPatient);
+                
+                document.getElementById('receptionistFullName').innerText = `${mockPatient.name[0].given[0]} ${mockPatient.name[0].family}`;
+                document.getElementById('receptionistDOB').innerText = mockPatient.birthDate;
+                document.getElementById('receptionistPatientId').innerText = mockPatient.id;
+                document.getElementById('receptionistGender').innerText = mockPatient.gender;
+                document.getElementById('receptionistContact').innerText = mockPatient.contact.phone;
+            };
+
+            // API Key Management Functions (Existing logic, now with custom modal)
+            const apiKeyForm = document.getElementById('apiKeyForm');
+            if (apiKeyForm) {
+                apiKeyForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const name = document.getElementById('keyName').value;
+                    const description = document.getElementById('keyDescription').value;
+                    const expiresInDays = document.getElementById('expiresInDays').value;
+                    const readPermission = document.getElementById('readPermission').checked;
+                    const writePermission = document.getElementById('writePermission').checked;
+                    const deletePermission = document.getElementById('deletePermission').checked;
+                    
+                    const resultDiv = document.getElementById('apiKeyResult');
+                    resultDiv.innerHTML = '<div class="loading-spinner"></div> Generating API key...';
+                    
+                    try {
+                        const response = await fetch('/api/generate-key', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                name,
+                                description,
+                                permissions: {
+                                    read: readPermission,
+                                    write: writePermission,
+                                    delete: deletePermission
+                                },
+                                expiresInDays: expiresInDays ? parseInt(expiresInDays) : null
+                            })
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (response.ok) {
+                            resultDiv.innerHTML = `
+                                <div class="alert-custom alert-success-custom">
+                                    <h6><i class="bi bi-check-circle-fill"></i> API Key Generated Successfully!</h6>
+                                    <p><strong>Key Name:</strong> ${result.name}</p>
+                                    <p><strong>API Key:</strong> <code style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px;">${result.apiKey}</code></p>
+                                    <p><strong>Permissions:</strong> ${Object.entries(result.permissions).filter(([k,v]) => v).map(([k]) => k).join(', ')}</p>
+                                    <p><strong>Expires:</strong> ${result.expiresAt ? new Date(result.expiresAt).toLocaleDateString() : 'Never'}</p>
+                                    <button class="btn btn-sm btn-outline-light mt-2" onclick="copyToClipboard('${result.apiKey}')">
+                                        <i class="bi bi-clipboard"></i> Copy Key
+                                    </button>
+                                </div>
+                            `;
+                            apiKeyForm.reset();
+                            loadApiKeys(); // Refresh the keys list
+                        } else {
+                            resultDiv.innerHTML = `
+                                <div class="alert-custom alert-error-custom">
+                                    <i class="bi bi-exclamation-circle-fill"></i> Error: ${result.issue[0].diagnostics}
+                                </div>
+                            `;
+                        }
+                    } catch (error) {
+                        resultDiv.innerHTML = `
+                            <div class="alert-custom alert-error-custom">
+                                <i class="bi bi-exclamation-circle-fill"></i> Error: ${error.message}
+                            </div>
+                        `;
+                    }
+                });
+            }
+
+            // Load existing API keys
+            window.loadApiKeys = async () => {
+                const keysListDiv = document.getElementById('apiKeysList');
+                keysListDiv.innerHTML = '<div class="loading-spinner"></div> Loading API keys...';
+                
+                try {
+                    const response = await fetch('/api/keys');
+                    const result = await response.json();
+                    
+                    if (response.ok && result.entry) {
+                        if (result.entry.length === 0) {
+                            keysListDiv.innerHTML = '<p class="feature-description">No API keys found.</p>';
+                            return;
+                        }
+                        
+                        let html = '';
+                        result.entry.forEach(key => {
+                            const keyData = key.resource;
+                            const statusClass = keyData.isActive ? 'success' : 'danger';
+                            const statusText = keyData.isActive ? 'Active' : 'Inactive';
+                            const lastUsed = keyData.lastUsed ? new Date(keyData.lastUsed).toLocaleDateString() : 'Never';
+                            const expires = keyData.expiresAt ? new Date(keyData.expiresAt).toLocaleDateString() : 'Never';
+                            
+                            html += `
+                                <div class="patient-card">
+                                    <div class="patient-name">${keyData.name}</div>
+                                    <div class="patient-info">
+                                        <strong>Status:</strong> <span class="vital-badge ${statusClass}">${statusText}</span><br>
+                                        <strong>Permissions:</strong> ${Object.entries(keyData.permissions).filter(([k,v]) => v).map(([k]) => k).join(', ')}<br>
+                                        <strong>Last Used:</strong> ${lastUsed}<br>
+                                        <strong>Expires:</strong> ${expires}<br>
+                                        <strong>Created:</strong> ${new Date(keyData.createdAt).toLocaleDateString()}
+                                    </div>
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-outline-light me-2" onclick="copyToClipboard('${keyData.id}')">
+                                            <i class="bi bi-clipboard"></i> Copy Key
+                                        </button>
+                                        ${keyData.isActive ? `
+                                            <button class="btn btn-sm btn-outline-warning" onclick="deactivateKey('${keyData.id}')">
+                                                <i class="bi bi-x-circle"></i> Deactivate
+                                            </button>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        keysListDiv.innerHTML = html;
+                    } else {
+                        keysListDiv.innerHTML = `
+                            <div class="alert-custom alert-error-custom">
+                                <i class="bi bi-exclamation-circle-fill"></i> Error loading API keys
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    keysListDiv.innerHTML = `
+                        <div class="alert-custom alert-error-custom">
+                            <i class="bi bi-exclamation-circle-fill"></i> Error: ${error.message}
+                        </div>
+                    `;
+                }
+            };
+
+            // Copy to clipboard function
+            window.copyToClipboard = async (text) => {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    const button = event.target.closest('button');
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<i class="bi bi-check"></i> Copied!';
+                    button.classList.add('btn-success');
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.classList.remove('btn-success');
+                    }, 2000);
+                } catch (error) {
+                    console.error('Failed to copy:', error);
+                }
+            };
+
+            // Deactivate API key
+            window.deactivateKey = async (keyId) => {
+                showCustomModal('Are you sure you want to deactivate this API key?', true, async () => {
+                    try {
+                        const response = await fetch(`/api/keys/${keyId}/deactivate`, {
+                            method: 'PUT'
+                        });
+                        
+                        if (response.ok) {
+                            loadApiKeys();
+                        } else {
+                            showCustomModal('Error deactivating API key');
+                        }
+                    } catch (error) {
+                        showCustomModal('Error: ' + error.message);
+                    }
+                });
+            };
+        });
+    </script>
+</body>
+</html>
